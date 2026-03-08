@@ -29,31 +29,33 @@ export default function CameraCapture({ onCapture }: CameraCaptureProps) {
   }
 
   return (
-    <div className="space-y-3">
-      <div className="relative rounded-xl overflow-hidden bg-black">
-        <Webcam
-          ref={webcamRef}
-          audio={false}
-          screenshotFormat="image/jpeg"
-          videoConstraints={{
-            facingMode: 'environment',
-            width: { ideal: 1280 },
-            height: { ideal: 720 },
-          }}
-          onUserMediaError={() => setHasError(true)}
-          className="w-full"
-        />
-        {/* Overlay guide */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="border-2 border-white/50 rounded-lg w-3/4 h-16" />
-        </div>
+    <div className="relative rounded-xl overflow-hidden bg-black">
+      <Webcam
+        ref={webcamRef}
+        audio={false}
+        screenshotFormat="image/jpeg"
+        videoConstraints={{
+          facingMode: 'environment',
+          width: { ideal: 1280 },
+          height: { ideal: 720 },
+        }}
+        onUserMediaError={() => setHasError(true)}
+        className="w-full"
+        style={{ maxHeight: '60vh' }}
+      />
+      {/* Guide rectangle */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="border-2 border-white/70 rounded-lg w-3/4 h-16" />
       </div>
-      <button
-        onClick={capture}
-        className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-lg"
-      >
-        {HEBREW.scan.capture}
-      </button>
+      {/* Capture button always visible at bottom of camera */}
+      <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+        <button
+          onClick={capture}
+          className="bg-white text-blue-700 font-bold px-10 py-3 rounded-full shadow-lg text-lg active:scale-95 transition-transform"
+        >
+          {HEBREW.scan.capture}
+        </button>
+      </div>
     </div>
   );
 }
