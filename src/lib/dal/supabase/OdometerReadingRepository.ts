@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-server';
 import type { IOdometerReadingRepository, CreateOdometerReadingInput } from '../interfaces/IOdometerReadingRepository';
 import type { OdometerReading } from '@/lib/types';
 

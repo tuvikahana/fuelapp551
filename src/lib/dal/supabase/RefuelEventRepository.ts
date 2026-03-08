@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-server';
 import type { IRefuelEventRepository, CreateRefuelEventInput } from '../interfaces/IRefuelEventRepository';
 import type { RefuelEvent } from '@/lib/types';
 

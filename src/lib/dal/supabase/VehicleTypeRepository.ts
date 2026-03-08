@@ -1,4 +1,4 @@
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-server';
 import type { IVehicleTypeRepository, CreateVehicleTypeInput, UpdateVehicleTypeInput } from '../interfaces/IVehicleTypeRepository';
 import type { VehicleType } from '@/lib/types';
 

@@ -1,5 +1,5 @@
 import bcrypt from 'bcryptjs';
-import { supabaseAdmin } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase-server';
 import type { IUserRepository } from '../interfaces/IUserRepository';
 import type { User } from '@/lib/types';
 
