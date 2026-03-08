@@ -106,7 +106,7 @@ export default function EditVehicleTypePage() {
               <input
                 type="number"
                 step="any"
-                value={(vehicleType as Record<string, unknown>)[key] as number}
+                value={(vehicleType as unknown as Record<string, unknown>)[key] as number}
                 onChange={(e) => updateField(key, e.target.value)}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-blue-500"
                 inputMode="decimal"

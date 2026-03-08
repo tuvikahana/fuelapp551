@@ -1,6 +1,63 @@
-import type { Vehicle, VehicleType, OdometerReading, RefuelEvent, User } from '@prisma/client';
+// Core domain types (independent of any ORM)
 
-export type { Vehicle, VehicleType, OdometerReading, RefuelEvent, User };
+export interface User {
+  id: string;
+  name: string;
+  username: string;
+  passwordHash: string;
+  role: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface VehicleType {
+  id: string;
+  name: string;
+  fuelTankCapacityLiters: number;
+  estimatedKmPerLiter: number;
+  fuelBandThreshold75: number;
+  fuelBandThreshold50: number;
+  fuelBandThreshold25: number;
+  fuelBandThreshold10: number;
+  actionThresholdPlanRefuel: number;
+  actionThresholdRefuelSoon: number;
+  actionThresholdRefuelNow: number;
+  isActive: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Vehicle {
+  id: string;
+  vehicleNumber: string;
+  vehicleTypeId: string;
+  nickname: string | null;
+  notes: string | null;
+  lastFullRefuelOdometer: number | null;
+  latestConfirmedOdometer: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface OdometerReading {
+  id: string;
+  vehicleId: string;
+  userId: string | null;
+  inputMethod: string;
+  ocrValue: number | null;
+  confirmedValue: number;
+  imageUrl: string | null;
+  createdAt: string;
+}
+
+export interface RefuelEvent {
+  id: string;
+  vehicleId: string;
+  userId: string | null;
+  eventType: string;
+  odometerAtRefuel: number;
+  createdAt: string;
+}
 
 export type VehicleWithType = Vehicle & {
   vehicleType: VehicleType;

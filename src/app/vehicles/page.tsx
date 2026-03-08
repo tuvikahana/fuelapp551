@@ -1,10 +1,11 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import AppShell from '@/components/layout/AppShell';
 import VehicleCard from '@/components/vehicles/VehicleCard';
 import { HEBREW } from '@/lib/constants/hebrew';
+import { supabaseBrowser } from '@/lib/supabase';
 import type { VehicleWithStatus } from '@/lib/types';
 
 export default function VehicleListPage() {
@@ -13,6 +14,8 @@ export default function VehicleListPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const searchRef = useRef(search);
+  searchRef.current = search;
 
   const fetchVehicles = useCallback(async (q?: string) => {
     const url = q ? `/api/vehicles?q=${encodeURIComponent(q)}` : '/api/vehicles';
@@ -26,6 +29,22 @@ export default function VehicleListPage() {
   useEffect(() => {
     fetchVehicles();
     setIsAdmin(sessionStorage.getItem('admin_auth') === 'true');
+
+    // Real-time: refresh list on any vehicle/reading/refuel change
+    const channel = supabaseBrowser
+      .channel('vehicles-realtime')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'vehicles' }, () => {
+        fetchVehicles(searchRef.current || undefined);
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'odometer_readings' }, () => {
+        fetchVehicles(searchRef.current || undefined);
+      })
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'refuel_events' }, () => {
+        fetchVehicles(searchRef.current || undefined);
+      })
+      .subscribe();
+
+    return () => { supabaseBrowser.removeChannel(channel); };
   }, [fetchVehicles]);
 
   useEffect(() => {
