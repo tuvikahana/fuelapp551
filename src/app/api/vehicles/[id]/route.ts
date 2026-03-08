@@ -37,3 +37,14 @@ export async function PATCH(
   const vehicle = await vehicleRepository.update(params.id, parsed.data);
   return NextResponse.json(vehicle);
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  if (!isAdminAuthorized(request)) {
+    return NextResponse.json({ error: 'סיסמת מנהל שגויה' }, { status: 401 });
+  }
+  await vehicleRepository.delete(params.id);
+  return new NextResponse(null, { status: 204 });
+}

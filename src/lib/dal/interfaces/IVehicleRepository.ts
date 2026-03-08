@@ -26,4 +26,5 @@ export interface IVehicleRepository {
   update(id: string, data: UpdateVehicleInput): Promise<Vehicle>;
   updateOdometer(id: string, confirmedValue: number): Promise<Vehicle>;
   markFullRefuel(id: string, odometerValue: number): Promise<Vehicle>;
+  delete(id: string): Promise<void>;
 }

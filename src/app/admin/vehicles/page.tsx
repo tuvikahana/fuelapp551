@@ -10,6 +10,8 @@ export default function AdminVehiclesPage() {
   const router = useRouter();
   const [vehicles, setVehicles] = useState<VehicleWithStatus[]>([]);
   const [loading, setLoading] = useState(true);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmId, setConfirmId] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/vehicles')
@@ -19,6 +21,18 @@ export default function AdminVehiclesPage() {
         setLoading(false);
       });
   }, []);
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    const pin = sessionStorage.getItem('admin_pin') ?? '';
+    await fetch(`/api/vehicles/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-admin-pin': pin },
+    });
+    setVehicles((prev) => prev.filter((v) => v.id !== id));
+    setDeletingId(null);
+    setConfirmId(null);
+  };
 
   if (loading) {
     return (
@@ -55,17 +69,53 @@ export default function AdminVehiclesPage() {
             {vehicles.map((vehicle) => (
               <div
                 key={vehicle.id}
-                onClick={() => router.push(`/admin/vehicles/${vehicle.id}/edit`)}
-                className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between cursor-pointer hover:bg-gray-50"
+                className="bg-white rounded-lg border border-gray-200 p-3 flex items-center justify-between"
               >
-                <div>
+                <div
+                  className="flex-1 cursor-pointer"
+                  onClick={() => router.push(`/admin/vehicles/${vehicle.id}/edit`)}
+                >
                   <p className="font-bold">{vehicle.vehicleNumber}</p>
                   <p className="text-sm text-gray-500">{vehicle.vehicleType.name}</p>
                   {vehicle.nickname && (
                     <p className="text-sm text-gray-400">{vehicle.nickname}</p>
                   )}
                 </div>
-                <span className="text-gray-400">←</span>
+
+                <div className="flex items-center gap-2">
+                  {confirmId === vehicle.id ? (
+                    <>
+                      <button
+                        onClick={() => handleDelete(vehicle.id)}
+                        disabled={deletingId === vehicle.id}
+                        className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-3 py-1.5 rounded-lg disabled:opacity-50"
+                      >
+                        {deletingId === vehicle.id ? '...' : 'מחק'}
+                      </button>
+                      <button
+                        onClick={() => setConfirmId(null)}
+                        className="text-gray-500 text-sm px-3 py-1.5 rounded-lg border border-gray-300"
+                      >
+                        ביטול
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => router.push(`/admin/vehicles/${vehicle.id}/edit`)}
+                        className="text-blue-600 text-sm px-3 py-1.5 rounded-lg border border-blue-200"
+                      >
+                        עריכה
+                      </button>
+                      <button
+                        onClick={() => setConfirmId(vehicle.id)}
+                        className="text-red-500 text-sm px-3 py-1.5 rounded-lg border border-red-200"
+                      >
+                        מחיקה
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             ))}
           </div>

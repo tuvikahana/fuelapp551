@@ -132,4 +132,11 @@ export class SupabaseVehicleRepository implements IVehicleRepository {
     if (error) throw error;
     return toVehicle(row);
   }
+  async delete(id: string): Promise<void> {
+    const { error } = await supabaseAdmin
+      .from('vehicles')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  }
 }
