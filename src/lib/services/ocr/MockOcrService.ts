@@ -1,21 +1,24 @@
 import type { IOcrService, OcrResult } from './IOcrService';
 
-export class MockOcrService implements IOcrService {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+export class RealOcrService implements IOcrService {
   async extractOdometerValue(imageBase64: string): Promise<OcrResult> {
-    // Simulate processing delay
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const res = await fetch('/api/ocr', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ imageBase64 }),
+    });
 
-    // Generate a random plausible odometer value
-    const base = 30000 + Math.floor(Math.random() * 50000);
-    const value = Math.round(base / 10) * 10;
+    if (!res.ok) {
+      return { value: null, confidence: 0, raw: 'error' };
+    }
 
+    const data = await res.json();
     return {
-      value,
-      confidence: 0.75 + Math.random() * 0.2,
-      raw: value.toString(),
+      value: data.value ?? null,
+      confidence: data.value != null ? 0.9 : 0,
+      raw: data.raw ?? '',
     };
   }
 }
 
-export const ocrService = new MockOcrService();
+export const ocrService = new RealOcrService();
