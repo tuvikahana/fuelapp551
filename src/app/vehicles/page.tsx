@@ -19,11 +19,16 @@ export default function VehicleListPage() {
 
   const fetchVehicles = useCallback(async (q?: string) => {
     const url = q ? `/api/vehicles?q=${encodeURIComponent(q)}` : '/api/vehicles';
-    const res = await fetch(url);
-    if (res.ok) {
-      setVehicles(await res.json());
+    try {
+      const res = await fetch(url);
+      if (res.ok) {
+        setVehicles(await res.json());
+      }
+    } catch {
+      // network error — leave vehicles as empty array
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
 
   useEffect(() => {
